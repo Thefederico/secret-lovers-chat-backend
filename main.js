@@ -1,7 +1,7 @@
 const server = require('http').createServer()
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'https://secret-lovers.netlify.app'
+    origin: '*'
   }
 })
 
