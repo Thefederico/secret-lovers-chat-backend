@@ -1,11 +1,25 @@
-const server = require('http').createServer()
-const io = require('socket.io')(server, {
-  cors: {
-    origin: 'https://62cb751527fb412017fb7d69--aquamarine-axolotl-307a46.netlify.app/'
-  }
-})
+const express = require('express')
+const cors = require('cors')
+const http = require('http')
+const { Server } = require('socket.io')
 
-const PORT = 3001
+const app = express()
+const server = http.createServer(app)
+const port = process.env.PORT || 3000
+const io = new Server(server)
+
+const whiteList = ['*']
+const options = {
+  origin: (origin, callback) => {
+    if (whiteList.includes(origin) || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error('No permitido'))
+    }
+  }
+}
+app.use(cors(options))
+
 const NEW_CHAT_MESSAGE = 'newMessage'
 
 io.on('connection', socket => {
@@ -23,6 +37,6 @@ io.on('connection', socket => {
   })
 })
 
-server.listen(PORT, () => {
-  console.log(`Server on port: ${PORT}`)
-})
+app.listen(port, () =>
+  console.log(`Api listening on http://localhost:${port}/`)
+)
