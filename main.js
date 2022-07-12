@@ -1,12 +1,18 @@
-const server = require('http').createServer()
-const io = require('socket.io')(server, {
+import app from './app'
+import http from 'http'
+import { Server } from 'socket.io'
+
+const NEW_CHAT_MESSAGE = 'newMessage'
+const PORT = process.env.PORT || 3001
+
+const server = http.createServer(app)
+const httpServer = server.listen(PORT)
+
+const io = require('socket.io')(httpServer, {
   cors: {
     origin: '*'
   }
 })
-
-const PORT = 3001
-const NEW_CHAT_MESSAGE = 'newMessage'
 
 io.on('connection', socket => {
   console.log(`Client ${socket.id} connected`)
@@ -23,6 +29,4 @@ io.on('connection', socket => {
   })
 })
 
-server.listen(PORT, () => {
-  console.log(`Server on port: ${PORT}`)
-})
+console.log(`Server is running on port ${PORT}`)
